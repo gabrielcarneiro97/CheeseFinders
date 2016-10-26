@@ -43,6 +43,53 @@ public class Play extends GameState {
 
 
 
+    public Play(GameStateManager gsm, int fase){
+        super(gsm);
+
+        hud = new HUD(this);
+
+        this.world = new World(new Vector2(0, -9.81f), true);
+        cl = new GameContactListener();
+        world.setContactListener(cl);
+        b2dr = new Box2DDebugRenderer();
+
+        map = new Map("desktop/assets/maps/fase" + fase + ".tmx", this);
+        map.create();
+
+
+        RopeJointDef jdef = new RopeJointDef();
+        jdef.maxLength = 210f/PPM;
+
+
+        //mouse 1
+        this.mouse1 = new Mouse(world);
+        mouse1.create(map.initialPosition);
+
+        //mouse 2
+        this.mouse2 = new Mouse(world);
+        mouse2.create(map.initialPosition);
+
+        this.set = mouse1;
+
+        jdef.localAnchorA.set(0, 0);
+        jdef.localAnchorB.set(0, 0);
+        jdef.bodyA = mouse1.body;
+        jdef.bodyB = mouse2.body;
+
+        world.createJoint(jdef);
+
+
+        rope = new Rope(world, mouse1, mouse2);
+
+
+
+        b2dCam = new OrthographicCamera();
+        b2dCam.setToOrtho(false, (float)CheeseGame.V_WIDTH/PPM, (float)CheeseGame.V_HEIGHT/PPM);
+
+
+
+    }
+
     public Play(GameStateManager gsm){
         super(gsm);
 
@@ -53,7 +100,7 @@ public class Play extends GameState {
         world.setContactListener(cl);
         b2dr = new Box2DDebugRenderer();
 
-        map = new Map("desktop/assets/maps/fase" + 1 + ".tmx", this);
+        map = new Map("desktop/assets/maps/teste.tmx", this);
         map.create();
 
 

@@ -4,6 +4,7 @@ import com.mygdx.game.CheeseGame;
 import states.GameState;
 import states.Menu;
 import states.Play;
+import states.SelectFase;
 
 import java.util.Stack;
 
@@ -17,6 +18,10 @@ public class GameStateManager {
 
     public static final int PLAY = 1;
     public static final int MENU = 2;
+    public static final int SELECT = 3;
+
+    int fase;
+
 
 
     public GameStateManager(CheeseGame game){
@@ -31,15 +36,21 @@ public class GameStateManager {
 
     private GameState getState(int state){
         if(state == PLAY)
-            return new Play(this);
+            return new Play(this, fase);
         if(state == MENU)
             return new Menu(this);
+        if(state == SELECT)
+            return new SelectFase(this);
         return null;
     }
 
     public void setState(int state){
         popState();
         pushState(state);
+    }
+
+    public void setFase(int fase){
+        this.fase = fase;
     }
 
     public void pushState(int state){

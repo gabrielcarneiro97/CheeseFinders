@@ -37,6 +37,12 @@ public class CheeseGame extends ApplicationAdapter {
 		res.loadTexture("desktop/assets/animations/animationCheese.png", "animationCheese");
 		res.loadTexture("desktop/assets/rope.png", "rope");
 		res.loadTexture("desktop/assets/maps/cheese.png", "cheese");
+		res.loadTexture("desktop/assets/BtnD.png", "btnD");
+		res.loadTexture("desktop/assets/BtnS.png", "btnS");
+		res.loadTexture("desktop/assets/BtnFaseD.png", "btnFaseD");
+		res.loadTexture("desktop/assets/BtnFaseS.png", "btnFaseS");
+		res.loadTexture("desktop/assets/FundoMenu.png", "fundoMenu");
+		res.loadTexture("desktop/assets/LogoCheese.png", "logo");
 
 
 		Gdx.input.setInputProcessor(new GameInputsProcessor());
