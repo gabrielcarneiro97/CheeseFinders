@@ -94,7 +94,6 @@ public class Play extends GameState {
     public void handlerInput() {
 
         if(GameInputs.isPressed(GameInputs.RESET)){
-            System.out.println("R");
             reset();
         }
 
@@ -135,6 +134,10 @@ public class Play extends GameState {
         }
         if(GameInputs.isPressed(GameInputs.ACTION2)){
             changeState();
+        }
+        if(GameInputs.isDown(GameInputs.MOUSE_LEFT)){
+            System.out.println(GameInputs.MOUSE_LEFT_CORDS);
+            GameInputs.setKey(GameInputs.MOUSE_LEFT, false);
         }
     }
 

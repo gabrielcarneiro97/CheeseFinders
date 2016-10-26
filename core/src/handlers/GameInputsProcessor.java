@@ -2,6 +2,7 @@ package handlers;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by Gabriel on 23/10/2016.
@@ -30,6 +31,7 @@ public class GameInputsProcessor extends InputAdapter {
         if(k == Input.Keys.R){
             GameInputs.setKey(GameInputs.RESET, true);
         }
+
 
 
         return true;
@@ -62,5 +64,21 @@ public class GameInputsProcessor extends InputAdapter {
 
         return true;
 
+    }
+
+    @Override
+    public boolean touchDown (int x, int y, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) {
+            GameInputs.setKey(GameInputs.MOUSE_LEFT, true);
+            GameInputs.MOUSE_LEFT_CORDS = new Vector2(x, y);
+            return true;
+        }
+
+        if(button == Input.Buttons.RIGHT){
+            GameInputs.setKey(GameInputs.MOUSE_RIGHT, true);
+            GameInputs.MOUSE_RIGHT_CORDS = new Vector2(x, y);
+            return true;
+        }
+        return false;
     }
 }
