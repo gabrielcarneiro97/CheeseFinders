@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.mygdx.game.CheeseGame;
 import handlers.Animation;
 
-import static handlers.B2DVars.BIT_CHEESE;
 import static handlers.B2DVars.PPM;
 
 /**

@@ -36,6 +36,7 @@ public class CheeseGame extends ApplicationAdapter {
 		res.loadTexture("desktop/assets/animations/rightWlk.png", "rightWlk");
 		res.loadTexture("desktop/assets/animations/animationCheese.png", "animationCheese");
 		res.loadTexture("desktop/assets/rope.png", "rope");
+		res.loadTexture("desktop/assets/maps/cheese.png", "cheese");
 
 
 		Gdx.input.setInputProcessor(new GameInputsProcessor());

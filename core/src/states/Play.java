@@ -1,31 +1,14 @@
 package states;
 
 import static handlers.B2DVars.PPM;
-import static handlers.B2DVars.BIT_GROUND;
-import static handlers.B2DVars.BIT_RAT;
 
-import bodyPack.Cheese;
-import bodyPack.Map;
-import bodyPack.Mouse;
-import bodyPack.Rope;
+import bodyPack.*;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
-import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Array;
 import com.mygdx.game.CheeseGame;
 import handlers.GameContactListener;
@@ -45,8 +28,8 @@ public class Play extends GameState {
     Mouse set;
     Rope rope;
 
-    int totalCheese;
-    int collectedCheese;
+    public int totalCheese;
+    public int collectedCheese;
 
     Map map;
 
@@ -56,15 +39,22 @@ public class Play extends GameState {
     private Box2DDebugRenderer b2dr;
     private OrthographicCamera b2dCam;
 
+    private HUD hud;
+
 
 
     public Play(GameStateManager gsm){
         super(gsm);
 
+        hud = new HUD(this);
+
         this.world = new World(new Vector2(0, -9.81f), true);
         cl = new GameContactListener();
         world.setContactListener(cl);
         b2dr = new Box2DDebugRenderer();
+
+        map = new Map("desktop/assets/maps/fase" + 1 + ".tmx", this);
+        map.create();
 
 
         RopeJointDef jdef = new RopeJointDef();
@@ -73,11 +63,11 @@ public class Play extends GameState {
 
         //mouse 1
         this.mouse1 = new Mouse(world);
-        mouse1.create(new Vector2(180f/PPM, 200f/PPM));
+        mouse1.create(map.initialPosition);
 
         //mouse 2
         this.mouse2 = new Mouse(world);
-        mouse2.create(new Vector2(180f/PPM, 200f/PPM));
+        mouse2.create(map.initialPosition);
 
         this.set = mouse1;
 
@@ -96,14 +86,17 @@ public class Play extends GameState {
         b2dCam = new OrthographicCamera();
         b2dCam.setToOrtho(false, (float)CheeseGame.V_WIDTH/PPM, (float)CheeseGame.V_HEIGHT/PPM);
 
-        map = new Map("desktop/assets/maps/teste.tmx", this);
-        map.create();
 
 
     }
 
     @Override
     public void handlerInput() {
+
+        if(GameInputs.isPressed(GameInputs.RESET)){
+            System.out.println("R");
+            reset();
+        }
 
         if(GameInputs.isDown(GameInputs.ARROW_RIGHT)) {
             if (togheter) {
@@ -168,14 +161,15 @@ public class Play extends GameState {
         float x = position.x;
         float y = position.y;
 
-        b2dCam.position.set(x, y*1.3f, 0);
+        b2dCam.position.set(x, y, 0);
         b2dCam.update();
-        cam.position.set(x*PPM,y*PPM*1.3f,0);
+        cam.position.set(x*PPM,y*PPM,0);
         cam.update();
 
         mouse1.update(dt);
         mouse2.update(dt);
         map.updateCheeses(dt);
+        checkWin();
         //handle inputs
         handlerInput();
     }
@@ -190,12 +184,15 @@ public class Play extends GameState {
         //draw world
         b2dr.render(world, b2dCam.combined);
         map.render(cam);
-        mouse1.render(batch);
-        mouse2.render(batch);
         map.renderCheeses(batch);
         rope.render(batch);
+        mouse1.render(batch);
+        mouse2.render(batch);
 
         totalCheese = map.totalCheese;
+
+        batch.setProjectionMatrix(hudCam.combined);
+        hud.render(batch);
 
     }
 
@@ -276,6 +273,20 @@ public class Play extends GameState {
             set.body.applyForceToCenter(x, JUMP_HIGH, true);
 
         }
+    }
+
+    void checkWin(){
+        if(cl.atToca)
+            if(collectedCheese == totalCheese)
+                System.out.println("VOCÊ GANHOU!!");
+    }
+
+    void reset(){
+        mouse1.body.setTransform(map.initialPosition, 0);
+        mouse2.body.setTransform(map.initialPosition, 0);
+        map.resetCheeses();
+        collectedCheese = 0;
+
     }
 
 }

@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.mygdx.game.CheeseGame;
-import handlers.Contents;
 
 import static handlers.B2DVars.*;
 
@@ -39,7 +37,7 @@ public class Mouse extends BodyModel {
 
         fdef.shape = shape;
         fdef.filter.categoryBits = BIT_RAT;
-        fdef.filter.maskBits = (short) (BIT_CHEESE | BIT_GROUND);
+        fdef.filter.maskBits = (short) (BIT_CHEESE | BIT_GROUND | BIT_TOCA);
 
     }
 

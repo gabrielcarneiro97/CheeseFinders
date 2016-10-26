@@ -8,5 +8,6 @@ public class B2DVars {
     public static short BIT_GROUND = 2;
     public static short BIT_RAT = 4;
     public static short BIT_CHEESE = 8;
+    public static short BIT_TOCA = 16;
 
 }

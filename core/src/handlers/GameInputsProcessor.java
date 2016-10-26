@@ -27,6 +27,9 @@ public class GameInputsProcessor extends InputAdapter {
         if(k == Input.Keys.X){
             GameInputs.setKey(GameInputs.ACTION2, true);
         }
+        if(k == Input.Keys.R){
+            GameInputs.setKey(GameInputs.RESET, true);
+        }
 
 
         return true;
@@ -51,6 +54,9 @@ public class GameInputsProcessor extends InputAdapter {
         }
         if(k == Input.Keys.X){
             GameInputs.setKey(GameInputs.ACTION2, false);
+        }
+        if(k == Input.Keys.R){
+            GameInputs.setKey(GameInputs.RESET, false);
         }
 
 

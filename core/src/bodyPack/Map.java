@@ -1,9 +1,7 @@
 package bodyPack;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -12,13 +10,9 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.mygdx.game.CheeseGame;
-import handlers.GameContactListener;
 import states.GameState;
 
-import static handlers.B2DVars.BIT_GROUND;
-import static handlers.B2DVars.BIT_RAT;
-import static handlers.B2DVars.PPM;
+import static handlers.B2DVars.*;
 
 /**
  * Created by Gabriel on 24/10/2016.
@@ -36,8 +30,8 @@ public class Map {
 
     public int totalCheese;
 
-    Body lastCheese = null;
 
+    public Vector2 initialPosition;
 
     public Map(String path, GameState state){
         tiledMap = new TmxMapLoader().load(Gdx.files.internal(path).file().getAbsolutePath());
@@ -84,6 +78,7 @@ public class Map {
                     fdef.filter.categoryBits = BIT_GROUND;
                     fdef.filter.maskBits = BIT_RAT;
                     fdef.isSensor = false;
+                    fdef.restitution = 0;
 
 
 
@@ -91,25 +86,60 @@ public class Map {
                     body.createFixture(fdef).setUserData("crate");
                 }
 
+                if (cell.getTile().getProperties().get("type").equals("toca")){
+                    ChainShape shape = new ChainShape();
+                    Vector2[] v = new Vector2[4];
+                    v[0] = new Vector2(-tileSize/2/PPM, -tileSize/2/PPM);
+                    v[1] = new Vector2(-tileSize/2/PPM, tileSize/2/PPM);
+                    v[2] = new Vector2(tileSize/2/PPM, tileSize/2/PPM);
+                    v[3] = new Vector2(tileSize/2/PPM, -tileSize/2/PPM);
+
+
+                    shape.createLoop(v);
+
+                    fdef.shape = shape;
+                    fdef.filter.categoryBits = BIT_TOCA;
+                    fdef.filter.maskBits = BIT_RAT;
+                    fdef.isSensor = true;
+                    fdef.restitution = 0;
+
+
+
+
+                    body = world.createBody(bdef);
+                    body.createFixture(fdef).setUserData("toca");
+                }
+
+                if (cell.getTile().getProperties().get("type").equals("jumper")){
+                    ChainShape shape = new ChainShape();
+                    Vector2[] v = new Vector2[4];
+                    v[0] = new Vector2(-tileSize/2/PPM, -tileSize/2/PPM);
+                    v[1] = new Vector2(-tileSize/2/PPM, tileSize/2/PPM);
+                    v[2] = new Vector2(tileSize/2/PPM, tileSize/2/PPM);
+                    v[3] = new Vector2(tileSize/2/PPM, -tileSize/2/PPM);
+
+
+                    shape.createLoop(v);
+
+                    fdef.shape = shape;
+                    fdef.filter.categoryBits = BIT_GROUND;
+                    fdef.filter.maskBits = BIT_RAT;
+                    fdef.isSensor = false;
+                    fdef.restitution = 1.5f;
+
+
+                    body = world.createBody(bdef);
+                    body.createFixture(fdef).setUserData("jumper");
+                }
+
+                if (cell.getTile().getProperties().get("type").equals("start")){
+                    initialPosition = new Vector2((col + .5f)*tileSize/PPM, (row + .5f)*tileSize/PPM);
+                }
+
             }
         }
 
-        cheeses = new Array<Cheese>();
-
-        MapLayer objs = tiledMap.getLayers().get("cheeses");
-
-        for (MapObject mo : objs.getObjects()){
-
-            Cheese cheese = new Cheese(world);
-            float x = mo.getProperties().get("x", Float.class)/PPM;
-            float y = mo.getProperties().get("y", Float.class)/PPM;
-
-            cheese.create(new Vector2(x, y));
-
-
-            cheeses.add(cheese);
-            totalCheese++;
-        }
+        cheesesDef();
 
 
     }
@@ -129,6 +159,58 @@ public class Map {
     public void updateCheeses(float dt){
         for (Cheese cheese : cheeses){
             cheese.update(dt);
+        }
+    }
+
+    public void cheesesDef(){
+        cheeses = new Array<Cheese>();
+
+        totalCheese = 0;
+
+        MapLayer objs = tiledMap.getLayers().get("cheeses");
+
+        for (MapObject mo : objs.getObjects()){
+
+            Cheese cheese = new Cheese(world);
+            float x = mo.getProperties().get("x", Float.class)/PPM;
+            float y = mo.getProperties().get("y", Float.class)/PPM;
+
+            cheese.create(new Vector2(x, y));
+
+
+            cheeses.add(cheese);
+            totalCheese++;
+        }
+    }
+
+    public void resetCheeses(){
+        if(cheeses.size == 0){
+            cheesesDef();
+        }
+        else{
+            MapLayer objs = tiledMap.getLayers().get("cheeses");
+
+            for (MapObject mo : objs.getObjects()){
+
+                boolean isSet = false;
+
+                for (Cheese cheese : cheeses){
+                    if(cheese.body.getPosition().x == mo.getProperties().get("x", Float.class)/PPM && cheese.body.getPosition().x == mo.getProperties().get("x", Float.class)/PPM)
+                        isSet = true;
+                }
+
+                if(!isSet){
+                    Cheese cheese = new Cheese(world);
+                    float x = mo.getProperties().get("x", Float.class)/PPM;
+                    float y = mo.getProperties().get("y", Float.class)/PPM;
+
+                    cheese.create(new Vector2(x, y));
+
+
+                    cheeses.add(cheese);
+                }
+            }
+
         }
     }
 

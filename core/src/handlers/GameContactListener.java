@@ -11,6 +11,7 @@ public class GameContactListener implements ContactListener {
     private int isOnFloor1;
     private int isOnFloor2;
     public Array<Body> cheeseRemove = new Array<Body>();
+    public boolean atToca;
 
     @Override
     public void beginContact(Contact contact) {
@@ -26,6 +27,9 @@ public class GameContactListener implements ContactListener {
         if(a.getUserData() != null && a.getUserData().equals("Foot2")) isOnFloor2++;
         if(b.getUserData() != null && b.getUserData().equals("Foot2")) isOnFloor2++;
 
+//        if(!a.getUserData().equals("rope") || !b.getUserData().equals("rope"))
+//            System.out.println(a.getUserData() +  ", " + b.getUserData());
+
 
         if(a.getUserData().equals("cheese") && (b.getUserData().equals("Mouse1") || b.getUserData().equals("Mouse2"))){
             cheeseRemove.add(a.getBody());
@@ -34,6 +38,13 @@ public class GameContactListener implements ContactListener {
             cheeseRemove.add(b.getBody());
         }
 
+
+        if(a.getUserData().equals("toca") && (b.getUserData().equals("Mouse1") || b.getUserData().equals("Mouse2"))){
+            atToca = true;
+        }
+        if(b.getUserData().equals("toca") && (a.getUserData().equals("Mouse1") || a.getUserData().equals("Mouse2"))){
+            atToca = true;
+        }
 
     }
 
@@ -50,6 +61,13 @@ public class GameContactListener implements ContactListener {
 
         if(a.getUserData() != null && a.getUserData().equals("Foot2")) isOnFloor2--;
         if(b.getUserData() != null && b.getUserData().equals("Foot2")) isOnFloor2--;
+
+        if(a.getUserData().equals("toca") && (b.getUserData().equals("Mouse1") || b.getUserData().equals("Mouse2"))){
+            atToca = false;
+        }
+        if(b.getUserData().equals("toca") && (a.getUserData().equals("Mouse1") || a.getUserData().equals("Mouse2"))){
+            atToca = false;
+        }
 
     }
 

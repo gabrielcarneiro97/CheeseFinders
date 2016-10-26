@@ -7,13 +7,14 @@ public class GameInputs {
     public static boolean[] keys;
     public static boolean[] pkeys;
 
-    public static final int NUM_KEYS = 6;
+    public static final int NUM_KEYS = 7;
     public static final int ARROW_UP = 0;
     public static final int ARROW_RIGHT = 1;
     public static final int ARROW_DOWN = 2;
     public static final int ARROW_LEFT = 3;
     public static final int ACTION1 = 4;
     public static final int ACTION2 = 5;
+    public static final int RESET = 6;
 
     static {
         keys = new boolean[NUM_KEYS];
